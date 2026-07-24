@@ -1,0 +1,70 @@
+apiVersion: management.loft.sh/v1
+kind: NodeProvider
+metadata:
+  name: auto-nodes-aws
+spec:
+  terraform:
+    nodeEnvironmentTemplate:
+      infrastructure:
+        git:
+          repository: https://github.com/loft-sh/vcluster-auto-nodes-aws.git
+          tag: v0.1.0
+          subPath: environment/infrastructure
+      kubernetes:
+        git:
+          repository: https://github.com/loft-sh/vcluster-auto-nodes-aws.git
+          tag: v0.1.0
+          subPath: environment/kubernetes
+    nodeTemplate:
+      git:
+        repository: https://github.com/loft-sh/vcluster-auto-nodes-aws.git
+        tag: v0.1.0
+        subPath: node
+    nodeTypes:
+    - name: t3.small
+      resources:
+        cpu: "2"
+        memory: 2Gi
+      properties:
+        instance-type: t3.small
+        region: "us-east-1"
+  # ====== REQUIRED: Set API endpoint so nodes can reach vCluster API server ======
+  # IMPORTANT: Uncomment and set the api-endpoint below with your vCluster's
+  # external hostname. This is REQUIRED for Karpenter to properly sync and
+  # provision nodes. Without this, nodes will fail to register with vCluster.
+  properties:
+  - key: vcluster.com/api-endpoint
+    required: true
+    # Example values:
+    # - DNS name: vcluster.marina.viasat.io
+    # - LoadBalancer hostname: abc123-123456789.elb.us-east-1.amazonaws.com
+    # - IP address: 1.2.3.4 (less preferred, use FQDN if possible)
+    defaultValue: "vcluster.marina.viasat.io"  # CHANGE THIS TO YOUR VCLUSTER ENDPOINT
+    - name: t3.medium
+      resources:
+        cpu: "2"
+        memory: 4Gi
+      properties:
+        instance-type: t3.medium
+        region: "us-east-1"
+    - name: t3.large
+      resources:
+        cpu: "2"
+        memory: 8Gi
+      properties:
+        instance-type: t3.large
+        region: "us-east-1"
+    - name: t3.xlarge
+      resources:
+        cpu: "4"
+        memory: 16Gi
+      properties:
+        instance-type: t3.xlarge
+        region: "us-east-1"
+    - name: t3.2xlarge
+      resources:
+        cpu: "8"
+        memory: 32Gi
+      properties:
+        instance-type: t3.2xlarge
+        region: "us-east-1"
